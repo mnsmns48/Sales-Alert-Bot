@@ -1,9 +1,8 @@
 import logging
 
 from aiogram import executor
-from handlers import register_all_handlers, setup_commands
+from handlers import register_all_handlers
 from handlers import dp
-
 from config import load_config
 
 config = load_config('.env')
@@ -13,4 +12,4 @@ logging.basicConfig(level=logging.INFO,
 if __name__ == '__main__':
     register_all_handlers()
 
-    executor.start_polling(dp, skip_updates=True, on_startup=setup_commands)
+    executor.start_polling(dp, skip_updates=True)
