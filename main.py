@@ -1,9 +1,8 @@
 import logging
-
 from aiogram import executor
-from handlers import register_all_handlers
-from handlers import dp
+from handlers import dp, register_all_handlers
 from config import load_config
+
 
 config = load_config('.env')
 logging.basicConfig(level=logging.INFO,

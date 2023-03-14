@@ -1,20 +1,11 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 from datetime import date
-from dicts import days, month
+
 
 date_now = date.today()
 
-kb_b = [
-    [KeyboardButton(text="Отмена", callback_data='cancel')],
-    [],
-    [KeyboardButton(text="Сегодня", callback_data='today')]
-]
+r_kb_b = [[KeyboardButton(text="Отмена")]]
+admin_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, keyboard=r_kb_b)
 
-for i in range(3, 0, -1):
-    for k, v in days[date_now.weekday() - i].items():
-        kb_b[1].append(KeyboardButton(text=f"{date_now.day - i} "
-                                           f"{month[date_now.month - 1].get(date_now.month)}\n"
-                                           f"{v}",
-                                      callback_data=f"{date_now.day - i}"))
-
-admin_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False, keyboard=kb_b)
+data_inline_kb = InlineKeyboardMarkup(row_width=3)
+data_inline_kb.add(InlineKeyboardButton(text='Сегодня', callback_data='today'))
