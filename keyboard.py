@@ -1,11 +1,14 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
-from datetime import date
 
+r_kb_b = [
+    [KeyboardButton(text='Начало работы бота')],
+    [KeyboardButton(text='Отмена')]]
+admin_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False, keyboard=r_kb_b)
 
-date_now = date.today()
-
-r_kb_b = [[KeyboardButton(text="Отмена")]]
-admin_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, keyboard=r_kb_b)
-
+i_btn = [
+    InlineKeyboardButton(text='Сегодня', callback_data='today'),
+    InlineKeyboardButton(text='Вчера', callback_data='yestarday')
+]
 data_inline_kb = InlineKeyboardMarkup(row_width=3)
-data_inline_kb.add(InlineKeyboardButton(text='Сегодня', callback_data='today'))
+data_inline_kb.add(*i_btn)
+data_inline_kb.add(InlineKeyboardButton(text='Другой день', callback_data='other'))
