@@ -1,12 +1,17 @@
 import asyncio
 import logging
-from handlers import dp, register_all_handlers
+
+from filter import AdminFilter
+from handlers.admin import dp, register_handlers_admin
+from handlers.user import register_handlers_user
 
 
 async def main():
     logging.basicConfig(level=logging.INFO,
                         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s', )
-    register_all_handlers()
+    dp.filters_factory.bind(AdminFilter)
+    register_handlers_admin()
+    register_handlers_user()
     await dp.skip_updates()
     await dp.start_polling()
 
