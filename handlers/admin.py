@@ -19,6 +19,7 @@ dp = Dispatcher(bot, storage=MemoryStorage())
 
 class Wait(StatesGroup):
     text = State()
+    photo = State()
 
 
 async def cmd_start(m: Message, state: FSMContext):
@@ -52,9 +53,17 @@ async def answer_data(m: Message):
     await m.answer(line)
 
 
+async def load_get_photo_id(m: Message):
+    await Wait.photo.set()
+    id_photo = m.photo[-1].file_id
+    await m.answer('ID на сервере Telegram:')
+    await m.answer(id_photo)
+
+
 def register_handlers_admin():
     dp.register_message_handler(cmd_start, CommandStart(), state='*', is_admin=True)
     dp.register_message_handler(cmd_start, Text(equals="Начало работы бота", ignore_case=True), state="*")
     dp.register_message_handler(cmd_cancel, Text(equals="Отмена", ignore_case=True), state="*")
-    dp.register_callback_query_handler(send_data, state=None)
+    dp.register_callback_query_handler(send_data)
     dp.register_message_handler(answer_data, state=Wait.text)
+    dp.register_message_handler(load_get_photo_id, content_types=['photo'])
