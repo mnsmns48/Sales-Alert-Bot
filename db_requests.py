@@ -35,5 +35,38 @@ def sales(cur, date: str, month: str):
         data_list.append(f"{str(row[0])[11:16]} {row[1]}\n--"
                          f"{int(row[2])}--{int(row[3])}--итого: <{int(row[4])}>\n{no_cash}\n")
     line = ''.join(data_list)
+    return line
 
+
+def goods_list(cur, arg1, arg2):
+    txt = []
+    cur.execute(
+        f"SELECT SQ.NAME, Sum(QUANTITY), SQ.PRICE_ FROM ("
+        f"SELECT dg.NAME, dst.QUANTITY, dg.PRICE_ "
+        f"FROM DIR_GOODS dg, DOC_SESSION_TABLE dst "
+        f"WHERE dg.CODE = dst.GOOD AND dg.PARENT BETWEEN {arg1} AND {arg2} "
+        f"UNION ALL "
+        f"SELECT dg.NAME, -dst2.QUANTITY, dg.PRICE_ "
+        f"FROM DIR_GOODS dg, DOC_SALE_TABLE dst2 "
+        f"WHERE dg.CODE = dst2.GOOD AND dg.PARENT BETWEEN {arg1} AND {arg2} "
+        f"UNION ALL "
+        f"SELECT dg.NAME, -dbt.QUANTITY, dg.PRICE_ "
+        f"FROM DIR_GOODS dg, DOC_BALANCE_TABLE dbt "
+        f"WHERE dg.CODE = dbt.GOOD AND dg.PARENT BETWEEN {arg1} AND {arg2} "
+        f"UNION ALL "
+        f"SELECT dg.NAME, +drt.QUANTITY, dg.PRICE_ "
+        f"FROM DIR_GOODS dg, DOC_RETURN_TABLE drt "
+        f"WHERE dg.CODE = drt.GOOD AND dg.PARENT BETWEEN {arg1} AND {arg2} "
+        f"UNION ALL "
+        f"SELECT dg.NAME, -det.QUANTITY, dg.PRICE_ "
+        f"FROM DIR_GOODS dg, DOC_EXPSESSION_TABLE det "
+        f"WHERE dg.CODE = det.GOOD AND dg.PARENT BETWEEN {arg1} AND {arg2}) SQ "
+        f"GROUP BY SQ.NAME, SQ.PRICE_ "
+        f"HAVING SUM(SQ.QUANTITY) >= 1 "
+        f"ORDER BY SQ.PRICE_"
+    )
+    result = cur.fetchall()
+    for row in result:
+        txt.append(f'{row[0]}\nЦена: {int(row[2])} руб\n\n')
+    line = ''.join(txt)
     return line

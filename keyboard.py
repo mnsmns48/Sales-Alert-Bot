@@ -14,3 +14,17 @@ data_inline_kb = InlineKeyboardMarkup(row_width=3)
 data_inline_kb.add(*i_btn)
 data_inline_kb.add(InlineKeyboardButton(text='Другой день', callback_data='other'))
 
+user_kb_1 = [
+    [KeyboardButton(text='Каталог товаров')],
+    [KeyboardButton(text='Услуги')],
+    [KeyboardButton(text='Информация')],
+
+]
+
+catalog = [
+    [KeyboardButton(text='Смартфоны')],
+    [KeyboardButton(text='Перейти в начало')]
+]
+
+user_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False, keyboard=user_kb_1)
+user_catalog = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False, keyboard=catalog)
