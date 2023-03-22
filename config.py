@@ -3,6 +3,11 @@ from environs import Env
 
 
 @dataclass
+class MiscPath:
+    photo: str
+
+
+@dataclass
 class DbConfig:
     dsn: str
     user: str
@@ -19,6 +24,7 @@ class TgBot:
 class Config:
     tg_bot: TgBot
     db: DbConfig
+    misc_path: MiscPath
 
 
 def load_config(path: str = None):
@@ -34,5 +40,8 @@ def load_config(path: str = None):
             dsn=env.str('DB_DSN'),
             user=env.str('DB_USER'),
             password=env.str('DB_PASSWORD'),
+        ),
+        misc_path=MiscPath(
+            photo=env.str("PHOTO_PATH"),
         ),
     )

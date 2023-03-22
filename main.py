@@ -1,9 +1,10 @@
 import asyncio
 import logging
 
+from bot import dp
 from filter import AdminFilter
-from handlers.admin import dp, register_handlers_admin
-from handlers.user import register_handlers_user
+from handlers.admin import register_handlers_admin
+
 
 
 async def main():
@@ -11,7 +12,6 @@ async def main():
                         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s', )
     dp.filters_factory.bind(AdminFilter)
     register_handlers_admin()
-    register_handlers_user()
     await dp.skip_updates()
     await dp.start_polling()
 

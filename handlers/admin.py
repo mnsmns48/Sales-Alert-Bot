@@ -1,20 +1,16 @@
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
-from aiogram import Dispatcher, Bot
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import CommandStart, Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from keyboard import admin_kb, data_inline_kb
-from db_requests import sales, cur_1, daily_total
+from firebird_requests import sales, cursor, daily_total
 from date import date_today, month_today, date_yesterday, month_yesterday
+from keyboards.admin_kb import admin_kb, data_inline_kb
+from bot import dp
 
 from config import load_config
 
 config = load_config('../.env')
-
-bot = Bot(token=config.tg_bot.bot_token)
-dp = Dispatcher(bot, storage=MemoryStorage())
 
 
 class Wait(StatesGroup):
@@ -22,10 +18,36 @@ class Wait(StatesGroup):
     photo = State()
 
 
-async def cmd_start(m: Message, state: FSMContext):
-    await state.finish()
+async def cmd_start(m: Message):
     await m.answer("--Режим админа--", reply_markup=admin_kb)
     await m.answer("Показать продажи за:", reply_markup=data_inline_kb)
+
+
+@dp.callback_query_handler()
+async def send_data(call: CallbackQuery):
+    if call.data == 'today':
+        line = sales(cursor, date_today, month_today) + daily_total(cursor, date_today, month_today)
+        await call.message.answer(line)
+    if call.data == 'yesterday':
+        line = sales(cursor, date_yesterday, month_yesterday) + daily_total(cursor, date_yesterday, month_yesterday)
+        await call.message.answer(line)
+    if call.data == 'other':
+        await call.message.answer('Введите дату')
+        await Wait.text.set()
+
+
+@dp.message_handler(content_types=['photo'], state="*")
+async def load_get_photo_id(m: Message):
+    await m.answer('добавь фото')
+    await Wait.photo.set()
+    id_photo = m.photo[-1].file_id
+    await m.answer('ID на сервере Telegram:')
+    await m.answer(id_photo)
+
+
+async def answer_data(m: Message):
+    line = sales(cursor, m.text[0:2], m.text[2:]) + daily_total(cursor, m.text[0:2], m.text[2:])
+    await m.answer(line)
 
 
 async def cmd_cancel(m: Message, state: FSMContext):
@@ -36,34 +58,7 @@ async def cmd_cancel(m: Message, state: FSMContext):
     await m.answer("Отмена\nДля начала работы на пиши /start", reply_markup=ReplyKeyboardRemove())
 
 
-async def send_data(call: CallbackQuery):
-    if call.data == 'today':
-        line = sales(cur_1, date_today, month_today) + daily_total(cur_1, date_today, month_today)
-        await call.message.answer(line)
-    if call.data == 'yestarday':
-        line = sales(cur_1, date_yesterday, month_yesterday) + daily_total(cur_1, date_yesterday, month_yesterday)
-        await call.message.answer(line)
-    if call.data == 'other':
-        await call.message.answer('Введите дату')
-        await Wait.text.set()
-
-
-async def answer_data(m: Message):
-    line = sales(cur_1, m.text[0:2], m.text[2:]) + daily_total(cur_1, m.text[0:2], m.text[2:])
-    await m.answer(line)
-
-
-async def load_get_photo_id(m: Message):
-    await Wait.photo.set()
-    id_photo = m.photo[-1].file_id
-    await m.answer('ID на сервере Telegram:')
-    await m.answer(id_photo)
-
-
 def register_handlers_admin():
-    dp.register_message_handler(cmd_start, CommandStart(), state='*', is_admin=True)
-    dp.register_message_handler(cmd_start, Text(equals="Начало работы бота", ignore_case=True), state="*")
-    dp.register_message_handler(cmd_cancel, Text(equals="Отмена", ignore_case=True), state="*")
-    dp.register_callback_query_handler(send_data)
-    dp.register_message_handler(answer_data, state=Wait.text)
-    dp.register_message_handler(load_get_photo_id, content_types=['photo'])
+    dp.register_message_handler(cmd_start, CommandStart(), state="*", is_admin=True)
+    dp.register_message_handler(cmd_cancel, Text(equals="Отмена", ignore_case=True), state="*", is_admin=True)
+    dp.register_message_handler(answer_data, state=Wait.text, is_admin=True)
