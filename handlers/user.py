@@ -4,7 +4,8 @@ from aiogram.types import Message, CallbackQuery
 from bot import dp, bot
 from firebird_requests import goods_list, cursor
 from keyboards.user_kb import user_1_kb, catalog_full_kb, catalog_brand_phones_kb, redmi_inline_kb, realme_inline_kb, \
-    samsung_inline_kb, tecno_inline_kb, tcl_inline_kb, media_pad_kb, key_old_phones_kb
+    samsung_inline_kb, tecno_inline_kb, tcl_inline_kb, media_pad_kb, key_old_phones_kb, watches_kb
+
 from sqlite_requests import read_product, take_caption
 from config import load_config
 
@@ -52,10 +53,14 @@ async def catalog_old_key_phones(m: Message):
     await m.answer(text='↓ ↓ ↓ В Наличии', reply_markup=key_old_phones_kb)
 
 
+async def smart_watches(m: Message):
+    await m.answer(text='↓ ↓ ↓ В Наличии', reply_markup=watches_kb)
+
+
 async def show_product(callback: CallbackQuery):
     code_product = callback.data
     chat_id = callback.from_user.id
-    caption = '' if take_caption(code_product) is None else take_caption(code_product)
+    caption = take_caption(code_product)
     pic = read_product(name='PHOTO', code='CODE', product_code=code_product)
     if pic is None or pic[0] is None:
         pic = open(str(config.misc_path.photo + str(code_product) + '.jpg'), 'rb')
@@ -91,3 +96,4 @@ def register_user_handlers():
     dp.register_message_handler(catalog, text="Перейти в начало")
     dp.register_message_handler(catalog_media_pad, text="Планшеты")
     dp.register_message_handler(catalog_old_key_phones, text="Кнопочные телефоны")
+    dp.register_message_handler(smart_watches, text="Умные часы")

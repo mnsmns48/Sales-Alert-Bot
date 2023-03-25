@@ -37,7 +37,8 @@ def take_caption(product_code):
     price = fb_dir_goods_request(cur=cursor, column='PRICE_', code=product_code)
     if result:
         line = read_product(name='NAME, DESCRIPT', code='CODE', product_code=product_code)
-        caption = f"{int(price[0][0])} руб.\n{line[0]}\n\n{line[1]}"
+        descr = '' if line[1] is None else line[1]
+        caption = f"Цена {int(price[0][0])} руб.\n{line[0]}\n\n{descr}"
         return caption
     else:
         line = fb_dir_goods_request(cur=cursor, column='NAME, PRICE_', code=product_code)
