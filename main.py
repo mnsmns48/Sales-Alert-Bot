@@ -13,7 +13,6 @@ async def main():
     dp.filters_factory.bind(AdminFilter)
     register_admin_handlers()
     register_user_handlers()
-
     await dp.skip_updates()
     await dp.start_polling()
 

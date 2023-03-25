@@ -23,9 +23,20 @@ def show(*args):
 
 
 user_1 = [
-    [KeyboardButton(text='Каталог товаров')],
+    [KeyboardButton(text='Товары в наличии')],
+    [KeyboardButton(text='Под заказ')],
+
 
 ]
+
+catalog_order = [
+    [KeyboardButton(text='Apple под заказ')],
+    [KeyboardButton(text='Xiomi под заказ')],
+    [KeyboardButton(text='Samsung под заказ')],
+    [KeyboardButton(text='Перейти в начало')],
+]
+
+catalog_order_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False, keyboard=catalog_order)
 
 catalog_full = [
     [KeyboardButton(text='Смартфоны')],
