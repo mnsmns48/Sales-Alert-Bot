@@ -7,6 +7,8 @@ realme_phone_path = 81
 redmi_phone_path = 82
 tecno_phone_path = 83
 tcl_phone_path = 84
+mediapad_phone_path = 29
+key_old_phones = 28
 
 code = 0
 name = 1
@@ -32,6 +34,8 @@ user_1 = [
 
 catalog_full = [
     [KeyboardButton(text='Смартфоны')],
+    [KeyboardButton(text='Планшеты')],
+    [KeyboardButton(text='Кнопочные телефоны')],
 ]
 
 catalog_brand_phones = [
@@ -50,26 +54,30 @@ catalog_brand_phones_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_key
                                               keyboard=catalog_brand_phones)
 
 redmi_inline_kb = InlineKeyboardMarkup()
-redmi_phone_btn = list()
 for i, c in zip(show(name, redmi_phone_path), show(code, redmi_phone_path)):
     redmi_inline_kb.add(InlineKeyboardButton(text=i[9:], callback_data=c))
 
 realme_inline_kb = InlineKeyboardMarkup()
-redmi_phone_btn = list()
 for i, c in zip(show(name, realme_phone_path), show(code, realme_phone_path)):
     realme_inline_kb.add(InlineKeyboardButton(text=i[9:], callback_data=c))
 
 samsung_inline_kb = InlineKeyboardMarkup()
-samsung_phone_btn = list()
 for i, c in zip(show(name, samsung_phone_path), show(code, samsung_phone_path)):
     samsung_inline_kb.add(InlineKeyboardButton(text=i[9:], callback_data=c))
 
 tecno_inline_kb = InlineKeyboardMarkup()
-tecno_phone_btn = list()
 for i, c in zip(show(name, tecno_phone_path), show(code, tecno_phone_path)):
     tecno_inline_kb.add(InlineKeyboardButton(text=i[9:], callback_data=c))
 
 tcl_inline_kb = InlineKeyboardMarkup()
-tcl_phone_btn = list()
 for i, c in zip(show(name, tcl_phone_path), show(code, tcl_phone_path)):
     tcl_inline_kb.add(InlineKeyboardButton(text=i[9:], callback_data=c))
+
+media_pad_kb = InlineKeyboardMarkup()
+for i, c in zip(show(name, mediapad_phone_path), show(code, mediapad_phone_path)):
+    media_pad_kb.add(InlineKeyboardButton(text=i[8:], callback_data=c))
+
+key_old_phones_kb = InlineKeyboardMarkup()
+for i, c, p in zip(show(name, key_old_phones), show(code, key_old_phones), show(price, key_old_phones)):
+    key_old_phones_kb.add(InlineKeyboardButton(
+        text=f'{p[:-2]} {i[18:]}', callback_data=c))
