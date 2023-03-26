@@ -31,7 +31,7 @@ user_1 = [
 
 catalog_order = [
     [KeyboardButton(text='Apple под заказ')],
-    [KeyboardButton(text='Xiomi под заказ')],
+    [KeyboardButton(text='Xiaomi под заказ')],
     [KeyboardButton(text='Samsung под заказ')],
     [KeyboardButton(text='Перейти в начало')],
 ]

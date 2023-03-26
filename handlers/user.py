@@ -9,7 +9,7 @@ from keyboards.user_kb import user_1_kb, catalog_full_kb, catalog_brand_phones_k
     samsung_inline_kb, tecno_inline_kb, tcl_inline_kb, media_pad_kb, key_old_phones_kb, watches_kb, catalog_order_kb
 
 from sqlite_requests import read_product, take_caption
-from Shippers.process import apple_ord, xiaomi_ord
+from Shippers.process import excel_order_list, xiaomi_del_list, samsung_del_list, text_file_order_list
 
 from config import load_config
 
@@ -67,28 +67,42 @@ async def items_order(m: Message):
 
 async def apple_order(m: Message):
     text = list()
-    for k, v in apple_ord.items():
+    result = text_file_order_list('Shippers/apple.txt')
+    for k, v in result.items():
         text.append((str(k) + ' - ' + str(v)))
-    line = '↓\n' + '\n'.join(text)
-    await m.answer(text=line)
-
+    line = '↓ ↓ ↓ ↓ В течение 2-7 дней:\n\n' + '\n'.join(text)
+    if len(line) > 4096:
+        for i in range(0, len(line), 4096):
+            part_mess = line[i: i + 4096]
+            await m.answer(part_mess)
+            time.sleep(1)
+    else:
+        await m.answer(text=line)
+    await m.answer('Обращайтесь @tser88 или @cifrotech_mobile')
 
 async def xiaomi_order(m: Message):
-    max_times, residue = int(), int()
-    text = list()
-    for k, v in xiaomi_ord.items():
-        text.append((str(k) + ' - ' + str(v)))
-    line = '↓\n' + '\n'.join(text)
-    if len(line) > 4096:
-        max_times = len(line) // 4096.
-        residue = len(line) % 4096
-        for i in range(int(max_times)):
-            await m.answer(line[(4096*i-4096):(4096*i)])
+    result = excel_order_list('Shippers/xiaomi.xlsx', xiaomi_del_list)
+    mess = '↓ ↓ ↓ ↓ В течение 2-7 дней:\n\n' + ''.join(str(item) + '\n' for item in result)
+    if len(mess) > 4096:
+        for i in range(0, len(mess), 4096):
+            part_mess = mess[i: i + 4096]
+            await m.answer(part_mess)
             time.sleep(1)
-
-
     else:
-        await m.answer(line)
+        await m.answer(mess)
+    await m.answer('Обращайтесь @tser88 или @cifrotech_mobile')
+
+async def samsung_order(m: Message):
+    result = excel_order_list('Shippers/samsung.xlsx', samsung_del_list)
+    mess = '↓ ↓ ↓ ↓ В течение 2-7 дней:\n\n' + ''.join(str(item) + '\n' for item in result)
+    if len(mess) > 4096:
+        for i in range(0, len(mess), 4096):
+            part_mess = mess[i: i + 4096]
+            await m.answer(part_mess)
+            time.sleep(1)
+    else:
+        await m.answer(mess)
+    await m.answer('Обращайтесь @tser88 или @cifrotech_mobile')
 
 
 async def show_product(callback: CallbackQuery):
@@ -133,4 +147,6 @@ def register_user_handlers():
     dp.register_message_handler(smart_watches, text="Умные часы")
     dp.register_message_handler(items_order, text="Под заказ")
     dp.register_message_handler(apple_order, text="Apple под заказ")
-    dp.register_message_handler(xiaomi_order, text="Xiomi под заказ")
+    dp.register_message_handler(xiaomi_order, text="Xiaomi под заказ")
+    dp.register_message_handler(samsung_order, text='Samsung под заказ')
+
