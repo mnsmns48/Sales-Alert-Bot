@@ -1,5 +1,3 @@
-import time
-
 from aiogram.dispatcher.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 
@@ -17,8 +15,10 @@ config = load_config('../.env')
 
 
 async def cmd_start(m: Message):
+    guest_name = m.from_user.first_name
     await m.answer_photo(photo='AgACAgIAAxkBAAIFuWQVrxkxJMuUdAUGfGAuXSt448I1AAKgxjEbYxGxSFOciZYzLCoJAQADAgADeQADLwQ',
-                         caption='Бот находится в режиме разработки и тестирования', reply_markup=user_1_kb)
+                         caption=f'Привет, {guest_name}, этот Бот находится в режиме тестирования',
+                         reply_markup=user_1_kb)
 
 
 async def catalog(m: Message):
@@ -80,6 +80,7 @@ async def apple_order(m: Message):
         await m.answer(text=line)
     await m.answer('Обращайтесь @tser88 или @cifrotech_mobile')
 
+
 async def xiaomi_order(m: Message):
     result = excel_order_list('Shippers/xiaomi.xlsx', xiaomi_del_list)
     mess = '↓ ↓ ↓ ↓ В течение 2-7 дней:\n\n' + ''.join(str(item) + '\n' for item in result)
@@ -91,6 +92,7 @@ async def xiaomi_order(m: Message):
     else:
         await m.answer(mess)
     await m.answer('Обращайтесь @tser88 или @cifrotech_mobile')
+
 
 async def samsung_order(m: Message):
     result = excel_order_list('Shippers/samsung.xlsx', samsung_del_list)
@@ -149,4 +151,3 @@ def register_user_handlers():
     dp.register_message_handler(apple_order, text="Apple под заказ")
     dp.register_message_handler(xiaomi_order, text="Xiaomi под заказ")
     dp.register_message_handler(samsung_order, text='Samsung под заказ')
-
